@@ -1,57 +1,50 @@
-# Project Name
+# QuoteOfTheDayAZD - Python
 
-(short, 1-3 sentenced, description of the project)
+## Prerequisites
 
-## Features
+- Clone this repository.
+- Install or update to Powershell 7 <https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.4>
+- Install or update Azure CLI <https://learn.microsoft.com/en-us/cli/azure/install-azure-cli>
+- Ensure you have the required permissions to deploy into the target Azure subscription. Either of the below sets of roles can be used:
+  - Owner
+  - Contributor & User Access Administrator
 
-This project framework provides the following features:
+## Use Azure Developer CLI
 
-* Feature 1
-* Feature 2
-* ...
+This application can be run using the [Azure Developer CLI](https://aka.ms/azd), or `azd`, with very few commands:
 
-## Getting Started
+- Navigate to the root of the repository.
+- Install [azd](https://aka.ms/azure-dev/install).
+- Log in `azd` (if you haven't done it before) to your Azure account:
 
-### Prerequisites
+```sh
+azd auth login
+```
 
-(ideally very short, if any)
+- Log in to the Azure CLI.
+```sh
+az login
+```
 
-- OS
-- Library version
-- ...
+- Initialize `azd` from the root of the repo.
 
-### Installation
+```sh
+azd init
+```
 
-(ideally very short)
+- During init:
+  - Enter an environment name for this deployment when prompted.
+- Create Azure resources and deploy the sample by running:
 
-- npm install [package name]
-- mvn install
-- ...
+```sh
+azd up
+```
 
-### Quickstart
-(Add steps to get up and running quickly)
+Notes:
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
-
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
-
-## Resources
-
-(Any additional resources or related projects)
-
-- Link to supporting information
-- Link to similar sample
-- ...
+- The operation takes a few minutes the first time it is ever run for an environment.
+- At the end of the process, `azd` will display the `url` for the webapp. Follow that link to test the sample.
+- You can run `azd up` after saving changes to the sample to re-deploy and update the sample.
+- `azd down` is an easy way to delete the newly created resources. The Entra App Registration will not be removed and must be removed separately.
+- Report any problems by opening an issue in [this repo](https://github.com/Azure-Samples/quote-of-the-day-dotnet/issues).
+- [FAQ and troubleshoot](https://learn.microsoft.com/azure/developer/azure-developer-cli/troubleshoot?tabs=Browser) for azd.
