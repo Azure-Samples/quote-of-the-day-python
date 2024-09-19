@@ -22,6 +22,7 @@ azd auth login
 ```
 
 - Log in to the Azure CLI.
+
 ```sh
 az login
 ```
