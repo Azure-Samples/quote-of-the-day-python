@@ -3,23 +3,6 @@
 name: quote-of-the-day-python
 metadata:
     template: quote-of-the-day-python@0.0.1-beta
-infra:
-    provider: "bicep"
-hooks:
-    prepackage:
-        shell: pwsh
-        run: |
-            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass 
-            ./infra/Setup-SplitExperimentationEntraApp.ps1
-        interactive: true
-        continueOnError: false
-    postprovision:
-        shell: pwsh
-        run: |
-            Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass 
-            ./infra/Setup-QuoteOfTheDayExperiment.ps1 -SubscriptionId $env:AZURE_SUBSCRIPTION_ID -AppConfigurationName $env:AZURE_APPCONFIGURATION_NAME
-        interactive: true
-        continueOnError: false 
 services:
     QuoteOfTheDay:
         project: src
