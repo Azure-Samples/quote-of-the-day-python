@@ -17,7 +17,7 @@ hooks:
         shell: pwsh
         run: |
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass 
-            ./infra/Setup-QuoteOfTheDayExperiment.ps1 -SubscriptionId $env:AZURE_SUBSCRIPTION_ID -WorkspaceName $env:AZURE_SPLIT_WORKSPACE_NAME -AppConfigurationName $env:AZURE_APPCONFIGURATION_NAME
+            ./infra/Setup-QuoteOfTheDayExperiment.ps1 -SubscriptionId $env:AZURE_SUBSCRIPTION_ID -AppConfigurationName $env:AZURE_APPCONFIGURATION_NAME
         interactive: true
         continueOnError: false 
 services:

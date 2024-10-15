@@ -19,9 +19,6 @@ param AIname string
 param AItype string
 param AIrequestSource string
 param SEWname string
-param SEWsku string
-param SEWdataSourceEnabled bool
-param SEWEntraApplicationId string
 param AACname string
 param AACsku string
 param AACsoftDeleteRetentionInDays int
@@ -41,7 +38,6 @@ var tags = {
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 
-var storageBlobReaderRole = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
 var dataplaneEndpoint = '${DPendpoint}${SEWname}${resourceToken}'
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
@@ -77,22 +73,6 @@ module monitoring './shared/monitoring.bicep' = {
   scope: rg
 }
 
-module splitExperimentationWorkspace './shared/splitExperimentationWorkspace.bicep' = {
-  name: 'splitExperimentationWorkspace'
-  params: {
-    location: location
-    name: '${SEWname}${resourceToken}'
-    SEWsku: SEWsku
-    SEWdataSourceEnabled: SEWdataSourceEnabled
-    SEWEntraApplicationId: SEWEntraApplicationId
-    logAnalyticsWorkspaceResourceId: monitoring.outputs.logAnalyticsWorkspaceId
-    storageAccountResourceId: storageAccount.outputs.storageAccountId
-    storageBlobReaderRole: storageBlobReaderRole
-    storageAccountName: storageAccount.outputs.storageAccountName
-  }
-  scope: rg
-}
-
 module appConfiguration './shared/appConfiguration.bicep' = {
   name: 'appConfiguration'
   params: {
@@ -104,7 +84,7 @@ module appConfiguration './shared/appConfiguration.bicep' = {
     name: '${AACname}${resourceToken}'
     applicationInsightsId: monitoring.outputs.applicationInsightsId
     dataplaneEndpoint: dataplaneEndpoint
-    splitExperimentationWorkspaceResourceId: splitExperimentationWorkspace.outputs.splitExperimentationWorkspaceResourceId
+    splitExperimentationWorkspaceResourceId: ''
   }
   scope: rg
 }
@@ -134,7 +114,7 @@ module quoteOfTheDay './app/QuoteOfTheDay.bicep' = {
   scope: rg
 }
 
-output AZURE_SPLIT_WORKSPACE_NAME string = splitExperimentationWorkspace.outputs.splitExperimentationWorkspaceName
+output AZURE_SPLIT_WORKSPACE_NAME string = ''
 output AZURE_APPCONFIGURATION_NAME string = appConfiguration.outputs.appConfigurationName
 output AzureAppConfigurationConnectionString string = appConfiguration.outputs.appConfigurationConnectionString
 output ApplicationInsightsConnectionString string = monitoring.outputs.applicationInsightsConnectionString
