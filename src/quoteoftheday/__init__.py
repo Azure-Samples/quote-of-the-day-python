@@ -52,8 +52,6 @@ def loader_user(user_id):
 with app.app_context():
     db.create_all()
 
-breakpoint()
-
 if __name__ == "__main__":
     app.run(debug=True)
 
