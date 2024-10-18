@@ -9,6 +9,20 @@ param appDefinition object
 param appConfigurationConnectionString string
 param appServicePlanId string
 
+param appCommandLine string = 'entrypoint.sh'
+
+
+param runtimeName string = 'python'
+param runtimeVersion string = '3.12'
+
+param runtimeNameAndVersion string = '${runtimeName}|${runtimeVersion}'
+param alwaysOn bool = true
+param linuxFxVersion string = runtimeNameAndVersion
+param minimumElasticInstanceCount int = -1
+param numberOfWorkers int = -1
+param use32BitWorkerProcess bool = false
+param ftpsState string = 'FtpsOnly'
+
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: identityName
   location: location
@@ -29,9 +43,14 @@ resource appService 'Microsoft.Web/sites@2023-01-01' = {
   properties: {
     serverFarmId: appServicePlanId
     siteConfig: {
-      appCommandLine: 'entrypoint.sh'
-      linuxFxVersion: 'PYTHON|3.9'
-      alwaysOn: true
+      linuxFxVersion: linuxFxVersion
+      alwaysOn: alwaysOn
+      ftpsState: ftpsState
+      minTlsVersion: '1.2'
+      appCommandLine: appCommandLine
+      numberOfWorkers: numberOfWorkers != -1 ? numberOfWorkers : null
+      minimumElasticInstanceCount: minimumElasticInstanceCount != -1 ? minimumElasticInstanceCount : null
+      use32BitWorkerProcess: use32BitWorkerProcess
     }
   }
 }

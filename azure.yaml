@@ -6,5 +6,5 @@ metadata:
 services:
     QuoteOfTheDay:
         project: src
+        language: py
         host: appservice
-        language: python
