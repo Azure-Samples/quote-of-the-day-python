@@ -26,15 +26,6 @@ CONNECTION_STRING = os.getenv("AzureAppConfigurationConnectionString")
 def callback():
     app.config.update(azure_app_config)
 
-def custom_publish(evaluation_event):
-    feature_flag_reference = evaluation_event.feature.telemetry.metadata["feature_flag_reference"]
-    feature_flag_id = evaluation_event.feature.telemetry.metadata["feature_flag_id"]
-    etag = evaluation_event.feature.telemetry.metadata["etag"]
-    evaluation_event.feature.telemetry.metadata["FeatureFlagReference"] = feature_flag_reference
-    evaluation_event.feature.telemetry.metadata["FeatureFlagId"] = feature_flag_id
-    evaluation_event.feature.telemetry.metadata["ETag"] = etag
-    publish_telemetry(evaluation_event)
-
 global azure_app_config
 azure_app_config = load(
     connection_string=CONNECTION_STRING,
@@ -43,7 +34,7 @@ azure_app_config = load(
     feature_flag_refresh_enabled=True,
 )
 app.config.update(azure_app_config)
-feature_manager = FeatureManager(azure_app_config, on_feature_evaluated=custom_publish)
+feature_manager = FeatureManager(azure_app_config, on_feature_evaluated=publish_telemetry)
 
 db = SQLAlchemy()
 db.init_app(app)
