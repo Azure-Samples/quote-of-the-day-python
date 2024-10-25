@@ -28,7 +28,7 @@ def index():
         Quote("You cannot change what you are, only what you do.", "Philip Pullman"),
     ]
 
-    greeting = feature_manager.get_variant("Greeting", user=user)
+    greeting = feature_manager.get_variant("Greeting", user)
     show_greeting = ""
     if greeting:
         show_greeting = greeting.configuration

@@ -9,7 +9,7 @@ param appDefinition object
 param appConfigurationConnectionString string
 param appServicePlanId string
 
-param appCommandLine string = 'entrypoint.sh'
+param appCommandLine string = '"entrypoint.sh"'
 
 
 param runtimeName string = 'python'
