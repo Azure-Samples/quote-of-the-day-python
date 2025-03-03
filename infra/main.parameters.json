@@ -5,6 +5,9 @@
       "environmentName": {
         "value": "${AZURE_ENV_NAME}"
       },
+      "location": {
+        "value": "${AZURE_LOCATION}"
+      },
       "quoteOfTheDayDefinition": {
         "value": {
           "settings": {
@@ -16,9 +19,6 @@
       },
       "LAWname": {
         "value": "lawpreview"
-      },
-      "location": {
-        "value": "eastus"
       },
       "LAWsku": {
         "value": "pergb2018"

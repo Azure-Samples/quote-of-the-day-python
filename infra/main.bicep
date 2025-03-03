@@ -5,11 +5,13 @@ targetScope = 'subscription'
 @description('Name of the environment that can be used as part of naming resource convention')
 param environmentName string
 
+@description('Location for all resources')
+param location string
+
 @secure()
 param quoteOfTheDayDefinition object
 
 param LAWname string
-param location string
 param LAWsku string
 param AIname string
 param AItype string
