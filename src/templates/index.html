@@ -44,10 +44,6 @@
                 body: JSON.stringify({
                     action: action
                 })
-            }).catch((error) => {
-                // Revert icon state if there was an error
-                icon.classList.toggle('far');
-                icon.classList.toggle('fas');
             });
         }
     }
