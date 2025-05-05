@@ -41,21 +41,19 @@ def index():
 
 @bp.route("/heart", methods=["POST"])
 def heart():
-    user = "Guest"
     if current_user.is_authenticated:
         user = current_user.username
     
-    # Get the heart action from the request data
-    data = request.get_json()
-    action = data.get('action', 'like')  # Default to like if not specified
-    
-    # Track the appropriate event based on the action
-    if action == 'like':
-        track_event("Liked", user)
-    elif action == 'unlike':
-        track_event("Unliked", user)
-    
-    return jsonify({"success": True, "action": action, "user": user})
+        # Get the heart action from the request data
+        data = request.get_json()
+        action = data.get('action', 'like')  # Default to like if not specified
+        
+        # Track the appropriate event based on the action
+        if action == 'like':
+            track_event("Liked", user)
+        
+        return jsonify({"success": True, "action": action, "user": user})
+    return jsonify({"success": False, "message": "User not authenticated."}), 401
 
 @bp.route("/privacy", methods=["GET"])
 def privacy():

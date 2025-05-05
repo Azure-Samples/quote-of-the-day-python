@@ -30,26 +30,26 @@
         // Toggle the heart icon appearance
         icon.classList.toggle('far');
         icon.classList.toggle('fas');
-          // Determine if it's a like or unlike action
+        // Determine if it's a like or unlike action
         const isNowLiked = icon.classList.contains('fas');
         const action = isNowLiked ? 'like' : 'unlike';
         
-        // Send a request to the dedicated heart endpoint
-        fetch('/heart', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: action
-            })
-        })
-        .then(response => response.json())
-        .catch((error) => {
-            // Revert icon state if there was an error
-            icon.classList.toggle('far');
-            icon.classList.toggle('fas');
-        });
+        // Only send a request to the dedicated heart endpoint when it's a like action
+        if (action === 'like') {
+            fetch('/heart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: action
+                })
+            }).catch((error) => {
+                // Revert icon state if there was an error
+                icon.classList.toggle('far');
+                icon.classList.toggle('fas');
+            });
+        }
     }
 </script>
 {% endblock %}
