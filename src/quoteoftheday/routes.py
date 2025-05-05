@@ -1,14 +1,15 @@
 import random
+import json
 
 from featuremanagement.azuremonitor import track_event
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import current_user, login_user, logout_user
 from . import azure_app_config, feature_manager, db, bcrypt
 from .model import Quote, Users
 
 bp = Blueprint("pages", __name__)
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/", methods=["GET"])
 def index():
     global azure_app_config
     # Refresh the configuration from App Configuration service.
@@ -20,9 +21,6 @@ def index():
         context["user"] = user
     else:
         context["user"] = "Guest"
-    if request.method == "POST":
-        track_event("Liked", user)
-        return redirect(url_for("pages.index"))
 
     quotes = [
         Quote("You cannot change what you are, only what you do.", "Philip Pullman"),
@@ -40,6 +38,24 @@ def index():
     context["isAuthenticated"] = current_user.is_authenticated
 
     return render_template("index.html", **context)
+
+@bp.route("/heart", methods=["POST"])
+def heart():
+    user = "Guest"
+    if current_user.is_authenticated:
+        user = current_user.username
+    
+    # Get the heart action from the request data
+    data = request.get_json()
+    action = data.get('action', 'like')  # Default to like if not specified
+    
+    # Track the appropriate event based on the action
+    if action == 'like':
+        track_event("Liked", user)
+    elif action == 'unlike':
+        track_event("Unliked", user)
+    
+    return jsonify({"success": True, "action": action, "user": user})
 
 @bp.route("/privacy", methods=["GET"])
 def privacy():

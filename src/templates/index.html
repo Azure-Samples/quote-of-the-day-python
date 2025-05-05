@@ -26,19 +26,31 @@
 <script>
     function heartClicked(button) {
         var icon = button.querySelector('i');
+        const wasLiked = icon.classList.contains('fas');
+        
+        // Toggle the heart icon appearance
         icon.classList.toggle('far');
         icon.classList.toggle('fas');
-
-        // If the quote is hearted
-        if (icon.classList.contains('fas')) {
-            // Send a request to the server to save the vote
-            fetch('/?handler=HeartQuote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-        }
+          // Determine if it's a like or unlike action
+        const isNowLiked = icon.classList.contains('fas');
+        const action = isNowLiked ? 'like' : 'unlike';
+        
+        // Send a request to the dedicated heart endpoint
+        fetch('/heart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: action
+            })
+        })
+        .then(response => response.json())
+        .catch((error) => {
+            // Revert icon state if there was an error
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+        });
     }
 </script>
 {% endblock %}
