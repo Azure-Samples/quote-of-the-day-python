@@ -53,7 +53,6 @@ def heart():
             track_event("Liked", user)
         
         return jsonify({"success": True, "action": action, "user": user})
-    return jsonify({"success": False, "message": "User not authenticated."}), 401
 
 @bp.route("/privacy", methods=["GET"])
 def privacy():
