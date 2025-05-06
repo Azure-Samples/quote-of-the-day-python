@@ -43,16 +43,10 @@ def index():
 def heart():
     if current_user.is_authenticated:
         user = current_user.username
-    
-        # Get the heart action from the request data
-        data = request.get_json()
-        action = data.get('action', 'like')  # Default to like if not specified
         
         # Track the appropriate event based on the action
-        if action == 'like':
-            track_event("Liked", user)
-        
-        return jsonify({"success": True, "action": action, "user": user})
+        track_event("Liked", user)
+    return jsonify({"status": "success"})
 
 @bp.route("/privacy", methods=["GET"])
 def privacy():
