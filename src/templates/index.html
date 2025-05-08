@@ -3,10 +3,8 @@
 {% block content %}
 <div class="quote-container">
     <div class="quote-content">
-       {% if model.greeting_message %}
-            <h3 class="greeting-content">Hi <b>{{user}}</b>, hope this makes your day!</h3>
-        {% else %}
-            <h3 class="greeting-content">Quote of the day</h3>
+        {% if model.greeting_message %}
+        <h3 class="greeting-content">{{model.greeting_message}}</h3>
         {% endif %}
         <br />
         <p class="quote">“{{model.quote.message}}”</p>
