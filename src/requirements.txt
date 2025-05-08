@@ -1,7 +1,7 @@
 Flask==2.3.2
 azure-identity==1.16.1
-azure-appconfiguration-provider==2.0.0b2
-featuremanagement[AzureMonitor]==2.0.0b2
+azure-appconfiguration-provider
+featuremanagement[AzureMonitor]
 azure-monitor-opentelemetry
 flask-login
 flask_sqlalchemy

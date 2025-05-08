@@ -3,7 +3,7 @@
 {% block content %}
 <div class="quote-container">
     <div class="quote-content">
-       {% if model.show_greeting %}
+       {% if model.greeting_message %}
             <h3 class="greeting-content">Hi <b>{{user}}</b>, hope this makes your day!</h3>
         {% else %}
             <h3 class="greeting-content">Quote of the day</h3>
@@ -31,7 +31,7 @@
         icon.classList.toggle('far');
         icon.classList.toggle('fas');
         
-        // Only send a request to the dedicated heart endpoint when it's a like action
+        // Send a request to the heart endpoint when it's a like action
         if (icon.classList.contains('fas')) {
             fetch('/heart', {
                 method: 'POST',
