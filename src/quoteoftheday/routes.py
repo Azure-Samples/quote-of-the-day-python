@@ -1,5 +1,4 @@
 import random
-import json
 
 from featuremanagement.azuremonitor import track_event
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
@@ -14,19 +13,13 @@ def index():
     global azure_app_config
     # Refresh the configuration from App Configuration service.
     azure_app_config.refresh()
-    context = {}
-    user = ""
-    if current_user.is_authenticated:
-        user = current_user.username
-        context["user"] = user
-    else:
-        context["user"] = "Guest"
+    context = get_user_context()
 
     quotes = [
         Quote("You cannot change what you are, only what you do.", "Philip Pullman"),
     ]
 
-    greeting = feature_manager.get_variant("Greeting", user)
+    greeting = feature_manager.get_variant("Greeting", context["user"])
     greeting_message = ""
     if greeting:
         greeting_message = greeting.configuration
@@ -50,15 +43,7 @@ def heart():
 
 @bp.route("/privacy", methods=["GET"])
 def privacy():
-    context = {}
-    user = ""
-    if current_user.is_authenticated:
-        user = current_user.username
-        context["user"] = user
-    else:
-        context["user"] = "Guest"
-    context["isAuthenticated"] = current_user.is_authenticated
-    return render_template("privacy.html", **context)
+    return render_template("privacy.html", **get_user_context())
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -93,3 +78,14 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("pages.index"))
+
+
+def get_user_context():
+    context = {}
+    context["isAuthenticated"] = current_user.is_authenticated
+    if current_user.is_authenticated:
+        user = current_user.username
+        context["user"] = user
+    else:
+        context["user"] = "Guest"
+    return context
