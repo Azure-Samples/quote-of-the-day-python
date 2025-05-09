@@ -84,8 +84,7 @@ def get_user_context():
     context = {}
     context["isAuthenticated"] = current_user.is_authenticated
     if current_user.is_authenticated:
-        user = current_user.username
-        context["user"] = user
+        context["user"] = current_user.username
     else:
         context["user"] = "Guest"
     return context
