@@ -20,6 +20,12 @@ param AACsoftDeleteRetentionInDays int
 param AACenablePurgeProtection bool
 param AACdisableLocalAuth bool
 
+param principalId string
+param principalType string = 'User'
+
+@description('Enable online experimentation (preview), currently only available in the East US 2 and Sweden Central regions.')
+param enableOnlineExperimentation bool
+
 // Tags that should be applied to all resources.
 // 
 // Note that 'azd-service-name' tags should be applied separately to service host resources.
@@ -62,6 +68,7 @@ module appConfiguration './shared/appConfiguration.bicep' = {
     location: location
     name: '${AACname}${resourceToken}'
     applicationInsightsId: monitoring.outputs.applicationInsightsId
+    enableOnlineExperimentation: enableOnlineExperimentation
   }
   scope: rg
 }
@@ -89,6 +96,48 @@ module quoteOfTheDay './app/QuoteOfTheDay.bicep' = {
     appServicePlanId: appServicePlan.outputs.id
   }
   scope: rg
+}
+
+// Setup for online experimentation if enabled
+// Including adding summary rules and data export rule to Log Analytics
+module onlineExperimentationWorkspace 'shared/onlineExperimentation.bicep' = if (enableOnlineExperimentation) {
+  name: 'online-experimentation-${resourceToken}'
+  scope: subscription()
+  params: {
+    resourceId: appConfiguration.outputs.onlineExperimentationResourceId
+    resourceGroupname: appConfiguration.outputs.managedResourceGroupName
+    principalId: principalId
+    principalType: principalType
+  }
+}
+
+
+var ruleDefinitions = loadYamlContent('shared/la-summary-rules.yaml')
+module summaryRules 'shared/summaryRule.bicep' = [for (rule, i) in ruleDefinitions.summaryRules: if (enableOnlineExperimentation) {
+  name: 'loganalytics-summaryrule-${i}'
+  scope: rg
+  params: {
+    location: location
+    logAnalyticsWorkspaceName: monitoring.outputs.logAnalyticsWorkspaceName
+    summaryRuleName: rule.name
+    description: rule.description
+    query: rule.query
+    binSize: rule.binSize
+    destinationTable: rule.destinationTable
+  }
+}]
+
+module dataExportRule 'shared/dataExport.bicep' = if (enableOnlineExperimentation) {
+  name: 'loganalytics-dataexportrule'
+  scope: rg
+  params: {
+    name: 'OEW-${resourceToken}-DataExportRule'
+    logAnalyticsWorkspaceName: monitoring.outputs.logAnalyticsWorkspaceName
+    storageAccountResourceId: appConfiguration.outputs.storageAccountResourceId
+    tables: [
+      'AppEvents'
+    ]
+  }
 }
 
 output AZURE_APPCONFIGURATION_NAME string = appConfiguration.outputs.appConfigurationName
