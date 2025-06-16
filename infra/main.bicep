@@ -140,6 +140,8 @@ module dataExportRule 'shared/dataExport.bicep' = if (enableOnlineExperimentatio
   }
 }
 
+output AZURE_RESOURCE_GROUP string = rg.name
+output APPCONFIG_RESOURCE_NAME string = appConfiguration.outputs.appConfigurationName
 output AZURE_APPCONFIGURATION_NAME string = appConfiguration.outputs.appConfigurationName
 output AzureAppConfigurationConnectionString string = appConfiguration.outputs.appConfigurationConnectionString
 output ApplicationInsightsConnectionString string = monitoring.outputs.applicationInsightsConnectionString
