@@ -3,7 +3,7 @@ import random
 from featuremanagement.azuremonitor import track_event
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import current_user, login_user, logout_user
-from . import azure_app_config, feature_manager, db, bcrypt
+from . import azure_app_config, feature_manager, db, bcrypt, targeting_context_accessor
 from .model import Quote, Users
 
 bp = Blueprint("pages", __name__)
@@ -14,21 +14,17 @@ def index():
     # Refresh the configuration from App Configuration service.
     azure_app_config.refresh()
     context = {}
-    user = ""
-    if current_user.is_authenticated:
-        user = current_user.username
-        context["user"] = user
-    else:
-        context["user"] = "Guest"
+    context["user"] = targeting_context_accessor().user_id
+    context["isAuthenticated"] = current_user.is_authenticated
     if request.method == "POST":
-        track_event("Liked", user)
+        track_event("Liked", context["user"])
         return redirect(url_for("pages.index"))
 
     quotes = [
         Quote("You cannot change what you are, only what you do.", "Philip Pullman"),
     ]
 
-    greeting = feature_manager.get_variant("Greeting", user)
+    greeting = feature_manager.get_variant("Greeting")
     show_greeting = ""
     if greeting:
         show_greeting = greeting.configuration
@@ -44,12 +40,7 @@ def index():
 @bp.route("/privacy", methods=["GET"])
 def privacy():
     context = {}
-    user = ""
-    if current_user.is_authenticated:
-        user = current_user.username
-        context["user"] = user
-    else:
-        context["user"] = "Guest"
+    context["user"] = targeting_context_accessor().user_id
     context["isAuthenticated"] = current_user.is_authenticated
     return render_template("privacy.html", **context)
 

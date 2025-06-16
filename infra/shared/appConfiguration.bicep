@@ -5,6 +5,7 @@ param AACsoftDeleteRetentionInDays int
 param AACenablePurgeProtection bool
 param AACdisableLocalAuth bool
 param applicationInsightsId string
+param enableOnlineExperimentation bool
 
 resource appConfigurationStore 'Microsoft.AppConfiguration/configurationStores@2023-09-01-preview' = {
   name: name
@@ -90,7 +91,16 @@ resource variantFeatureFlagGreeting 'Microsoft.AppConfiguration/configurationSto
   }
 }
 
+resource experimentation 'Microsoft.AppConfiguration/configurationStores/experimentation@2025-02-01-preview' = if (enableOnlineExperimentation) {
+  parent: appConfigurationStore
+  name: 'default'
+}
+
 var readonlyKey = filter(appConfigurationStore.listKeys().value, k => k.name == 'Primary Read Only')[0]
 
 output appConfigurationConnectionString string = readonlyKey.connectionString
 output appConfigurationName string = appConfigurationStore.name
+
+output managedResourceGroupName string = enableOnlineExperimentation ? experimentation.properties.managedResourceGroupName : ''
+output onlineExperimentationResourceId string = enableOnlineExperimentation ? experimentation.properties.onlineExperimentationWorkspaceResourceId : ''
+output storageAccountResourceId string = enableOnlineExperimentation ? experimentation.properties.storageAccountResourceId : ''

@@ -49,3 +49,13 @@ Notes:
 - `azd down` is an easy way to delete the newly created resources.
 - Report any problems by opening an issue in [this repo](https://github.com/Azure-Samples/quote-of-the-day-dotnet/issues).
 - [FAQ and troubleshoot](https://learn.microsoft.com/azure/developer/azure-developer-cli/troubleshoot?tabs=Browser) for azd.
+
+### How to eanble Online Experimentation (Preview)
+
+Online experimentation (Preview) is an optional feature for your App Configuration store that enables A/B testing capabilities. Currently available in East US 2 and Sweden Central regions, this feature helps you measure feature impact with statistical analysis. [Learn more](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-experimentation).
+
+To start, set the following environment variable before running `azd up`.
+```sh
+azd env set ENABLE_ONLINE_EXPERIMENTATION true
+azd up
+```

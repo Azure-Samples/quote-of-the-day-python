@@ -1,18 +1,29 @@
 import os
 from azure.appconfiguration.provider import load
-from featuremanagement import FeatureManager
-from featuremanagement.azuremonitor import publish_telemetry
+from featuremanagement import FeatureManager, TargetingContext
+from featuremanagement.azuremonitor import publish_telemetry, TargetingSpanProcessor
 from azure.monitor.opentelemetry import configure_azure_monitor
+
 from opentelemetry import trace
 from opentelemetry.trace import get_tracer_provider
-from flask_bcrypt import Bcrypt
 
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 
 DEBUG = True
 
-configure_azure_monitor(connection_string=os.getenv("ApplicationInsightsConnectionString"))
+def targeting_context_accessor() -> TargetingContext:
+    if current_user and current_user.is_authenticated:
+        user = current_user.username
+        user_id = user
+    else:
+        user_id = "Guest"
+    return TargetingContext(user_id=user_id)
+
+configure_azure_monitor(#connection_string=os.getenv("ApplicationInsightsConnectionString"))
+    connection_string=os.getenv("ApplicationInsightsConnectionString"),
+    span_processors=[TargetingSpanProcessor(targeting_context_accessor=targeting_context_accessor)])
 
 from flask import Flask
 
@@ -34,7 +45,10 @@ azure_app_config = load(
     feature_flag_refresh_enabled=True,
 )
 app.config.update(azure_app_config)
-feature_manager = FeatureManager(azure_app_config, on_feature_evaluated=publish_telemetry)
+feature_manager = FeatureManager(
+    azure_app_config, 
+    on_feature_evaluated=publish_telemetry,
+    targeting_context_accessor=targeting_context_accessor)
 
 db = SQLAlchemy()
 db.init_app(app)
