@@ -24,11 +24,11 @@
 <script>
     function heartClicked(button) {
         var icon = button.querySelector('i');
-        
+
         // Toggle the heart icon appearance
         icon.classList.toggle('far');
         icon.classList.toggle('fas');
-        
+
         // Send a request to the heart endpoint when it's a like action
         if (icon.classList.contains('fas')) {
             fetch('/heart', {
