@@ -19,10 +19,7 @@ def index():
         Quote("You cannot change what you are, only what you do.", "Philip Pullman"),
     ]
 
-    greeting = feature_manager.get_variant("Greeting", context["user"])
-    greeting_message = ""
-    if greeting:
-        greeting_message = greeting.configuration
+    greeting_message = feature_manager.get_variant("Greeting", context["user"]).configuration
 
     context["model"] = {}
     context["model"]["greeting_message"] = greeting_message
