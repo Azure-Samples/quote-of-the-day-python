@@ -3,8 +3,8 @@
 {% block content %}
 <div class="quote-container">
     <div class="quote-content">
-        {% if model.show_greeting %}
-        <h3 class="greeting-content">{{model.show_greeting}}</h3>
+        {% if model.greeting_message %}
+        <h3 class="greeting-content">{{model.greeting_message}}</h3>
         {% endif %}
         <br />
         <p class="quote">“{{model.quote.message}}”</p>
@@ -24,13 +24,14 @@
 <script>
     function heartClicked(button) {
         var icon = button.querySelector('i');
+
+        // Toggle the heart icon appearance
         icon.classList.toggle('far');
         icon.classList.toggle('fas');
 
-        // If the quote is hearted
+        // Send a request to the heart endpoint when it's a like action
         if (icon.classList.contains('fas')) {
-            // Send a request to the server to save the vote
-            fetch('/?handler=HeartQuote', {
+            fetch('/heart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
