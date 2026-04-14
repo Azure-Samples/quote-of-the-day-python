@@ -6,7 +6,7 @@ param identityName string
 param applicationInsightsName string
 @secure()
 param appDefinition object
-param appConfigurationConnectionString string
+param appConfigurationEndpoint string
 param appServicePlanId string
 
 param appCommandLine string = '"entrypoint.sh"'
@@ -70,7 +70,7 @@ module configAppSettings '../shared/appservice-appsettings.bicep' = {
         SCM_DO_BUILD_DURING_DEPLOYMENT: false
       },
       {
-        AzureAppConfigurationConnectionString: appConfigurationConnectionString
+        AzureAppConfigurationEndpoint: appConfigurationEndpoint
       },
       appDefinition.settings)
   }
@@ -78,3 +78,4 @@ module configAppSettings '../shared/appservice-appsettings.bicep' = {
 
 output name string = appService.name
 output uri string = 'https://${appService.properties.defaultHostName}'
+output identityPrincipalId string = identity.properties.principalId

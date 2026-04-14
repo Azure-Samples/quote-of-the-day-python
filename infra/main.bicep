@@ -85,12 +85,23 @@ module quoteOfTheDay './app/QuoteOfTheDay.bicep' = {
     identityName: '${abbrs.managedIdentityUserAssignedIdentities}quoteoftheda-${resourceToken}'
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     appDefinition: quoteOfTheDayDefinition
-    appConfigurationConnectionString: appConfiguration.outputs.appConfigurationConnectionString
+    appConfigurationEndpoint: appConfiguration.outputs.appConfigurationEndpoint
     appServicePlanId: appServicePlan.outputs.id
   }
   scope: rg
 }
 
+// App Configuration Data Reader role assignment for the managed identity
+resource appConfigRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(rg.id, quoteOfTheDay.outputs.identityPrincipalId, '516239f1-63e1-4d78-a4de-a74fb236a071')
+  scope: rg
+  properties: {
+    principalId: quoteOfTheDay.outputs.identityPrincipalId
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '516239f1-63e1-4d78-a4de-a74fb236a071')
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output AZURE_APPCONFIGURATION_NAME string = appConfiguration.outputs.appConfigurationName
-output AzureAppConfigurationConnectionString string = appConfiguration.outputs.appConfigurationConnectionString
+output AzureAppConfigurationEndpoint string = appConfiguration.outputs.appConfigurationEndpoint
 output ApplicationInsightsConnectionString string = monitoring.outputs.applicationInsightsConnectionString
