@@ -87,12 +87,22 @@ module quoteOfTheDay './app/QuoteOfTheDay.bicep' = {
     identityName: '${abbrs.managedIdentityUserAssignedIdentities}quoteoftheda-${resourceToken}'
     applicationInsightsName: monitoring.outputs.applicationInsightsName
     appDefinition: quoteOfTheDayDefinition
-    appConfigurationConnectionString: appConfiguration.outputs.appConfigurationConnectionString
+    appConfigurationEndpoint: appConfiguration.outputs.appConfigurationEndpoint
     appServicePlanId: appServicePlan.outputs.id
   }
   scope: rg
 }
 
+// App Configuration Data Reader role assignment scoped to the App Configuration resource
+module appConfigRoleAssignment './shared/appconfig-role-assignment.bicep' = {
+  name: 'appConfigRoleAssignment'
+  params: {
+    appConfigurationName: appConfiguration.outputs.appConfigurationName
+    principalId: quoteOfTheDay.outputs.identityPrincipalId
+  }
+  scope: rg
+}
+
 output AZURE_APPCONFIGURATION_NAME string = appConfiguration.outputs.appConfigurationName
-output AzureAppConfigurationConnectionString string = appConfiguration.outputs.appConfigurationConnectionString
+output AzureAppConfigurationEndpoint string = appConfiguration.outputs.appConfigurationEndpoint
 output ApplicationInsightsConnectionString string = monitoring.outputs.applicationInsightsConnectionString

@@ -1,5 +1,6 @@
 import os
 from azure.appconfiguration.provider import load
+from azure.identity import DefaultAzureCredential
 from featuremanagement import FeatureManager
 from featuremanagement.azuremonitor import publish_telemetry
 from azure.monitor.opentelemetry import configure_azure_monitor
@@ -21,14 +22,16 @@ bcrypt = Bcrypt(app)
 
 tracer = trace.get_tracer(__name__, tracer_provider=get_tracer_provider())
 
-CONNECTION_STRING = os.getenv("AzureAppConfigurationConnectionString")
+ENDPOINT = os.getenv("AzureAppConfigurationEndpoint")
+credential = DefaultAzureCredential()
 
 def callback():
     app.config.update(azure_app_config)
 
 global azure_app_config
 azure_app_config = load(
-    connection_string=CONNECTION_STRING,
+    endpoint=ENDPOINT,
+    credential=credential,
     on_refresh_success=callback,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
